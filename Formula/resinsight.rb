@@ -16,6 +16,7 @@ class Resinsight < Formula
   depends_on "type-lite" => :build
   depends_on "python" => :build
   depends_on "pugixml" => :build
+  depends_on "eigen" => :build
   depends_on "boost"
   depends_on "libomp"
   depends_on "qt"
@@ -86,31 +87,32 @@ class Resinsight < Formula
     end
   end
 
-
   def install
-     source_dir = buildpath/"src"
-     build_dir = buildpath/"build"
-     formula_dir = Pathname.new(__FILE__).dirname
+    source_dir = buildpath/"src"
+    build_dir = buildpath/"build"
+    formula_dir = Pathname.new(__FILE__).dirname
 
-     # move source to its own directory, otherwise, cmake complains of in-source builds
-     items = Dir[".[!.]*"] + Dir["*"]
-     mkdir source_dir
-     FileUtils.mv(items, source_dir)
+    # move source to its own directory, otherwise, cmake complains of in-source builds
+    items = Dir[".[!.]*"] + Dir["*"]
+    mkdir source_dir
+    FileUtils.mv(items, source_dir)
 
-     # override surfio with latest version
-     resource("surfio").stage "surfio"
-     surfio_dir = source_dir/"ThirdParty/custom-surfio/surfio"
-     FileUtils.rm_rf(surfio_dir) if surfio_dir.exist?
-     FileUtils.mv("surfio", surfio_dir)
+    # override surfio with latest version
+    resource("surfio").stage "surfio"
+    surfio_dir = source_dir/"ThirdParty/custom-surfio/surfio"
+    FileUtils.rm_rf(surfio_dir) if surfio_dir.exist?
+    FileUtils.mv("surfio", surfio_dir)
 
-     system "git", "-C", source_dir, "submodule", "update", "--init", "--recursive"
-     system "git", "-C", source_dir, "apply", "#{formula_dir}/patches/resinsight-surfio-from-chars.patch"
-     system "git", "-C", source_dir/"ThirdParty/openzgy/open-zgy", "apply", "#{formula_dir}/patches/resinsight-open-zgy.patch"
+    system "git", "-C", source_dir, "submodule", "update", "--init", "--recursive"
+    head do
+      system "git", "-C", source_dir, "apply", "#{formula_dir}/patches/resinsight-surfio-from-chars.patch"
+    end
+    system "git", "-C", source_dir/"ThirdParty/openzgy/open-zgy", "apply", "#{formula_dir}/patches/resinsight-open-zgy.patch"
 
-     system "cmake", "-S", source_dir, "-B", build_dir, *std_cmake_args, *Resinsight.cmake_args
-     system "cmake", "--build", build_dir
-     system "cmake", "--install", build_dir, "--component", "Runtime"
-     bin.install_symlink prefix/"ResInsight.app/Contents/MacOS/ResInsight"
+    system "cmake", "-S", source_dir, "-B", build_dir, *std_cmake_args, *Resinsight.cmake_args
+    system "cmake", "--build", build_dir
+    system "cmake", "--install", build_dir, "--component", "Runtime"
+    bin.install_symlink prefix/"ResInsight.app/Contents/MacOS/ResInsight"
   end
 
   # test do
