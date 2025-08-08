@@ -69,28 +69,44 @@ class Resinsight < Formula
       "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
       # Apple Clang + Homebrew needs special arguments for OpenMP
       "-DRESINSIGHT_USE_OPENMP=OFF",
+      "-DCMAKE_DISABLE_FIND_PACKAGE_OpenMP=ON",
       "-DCMAKE_CXX_FLAGS='-Xpreprocessor -fopenmp -I#{libomp.opt_include} -DUSE_OPENMP'",
       "-DCMAKE_EXE_LINKER_FLAGS='-L#{libomp.opt_lib} -lomp'",
       "-DCMAKE_SHARED_LINKER_FLAGS='-L#{libomp.opt_lib} -lomp'"
     ]
   end
 
+  resource "surfio" do
+     url "https://github.com/equinor/surfio.git" ,
+          using:    :git,
+          branch: "main",
+          revision: "9ba7fca3e8796708b5d01f76b6c8d4ff8167c0bcf90f67c4aa4a5f9397de3c46"
+  end
+
   def install
-     source_dir = buildpath
+     source_dir = buildpath/"src"
+     build_dir = buildpath/"build"
      formula_dir = Pathname.new(__FILE__).dirname
 
-     system "git", "submodule", "update", "--init", "--recursive"
-     system "git", "-C", "ThirdParty/custom-surfio/surfio", "apply", "#{formula_dir}/patches/resinsight-surfio-from-chars.patch"
-     system "git", "-C", "ThirdParty/openzgy/open-zgy", "apply", "#{formula_dir}/patches/resinsight-open-zgy.patch"
+     # move source to its own directory, otherwise, cmake complains of in-source builds
+     items = Dir[".[!.]*"] + Dir["*"]
+     mkdir source_dir
+     FileUtils.mv(items, source_dir)
 
-     Dir.mktmpdir("resinsight-build-") do |build_dir|
-          ohai "Temporary build directory: #{build_dir}"
+     # override surfio with latest version
+     resource("surfio").stage "surfio"
+     surfio_dir = source_dir/"ThirdParty/custom-surfio/surfio"
+     FileUtils.rm_rf(surfio_dir) if surfio_dir.exist?
+     FileUtils.mv("surfio", surfio_dir)
 
-          system "cmake", "-S", source_dir, "-B", build_dir, *std_cmake_args, *Resinsight.cmake_args
-          system "cmake", "--build", build_dir
-          system "cmake", "--install", build_dir, "--component", "Runtime"
-          bin.install_symlink prefix/"ResInsight.app/Contents/MacOS/ResInsight"
-     end
+     system "git", "-C", source_dir, "submodule", "update", "--init", "--recursive"
+     system "git", "-C", source_dir, "apply", "#{formula_dir}/patches/resinsight-surfio-from-chars.patch"
+     system "git", "-C", source_dir/"ThirdParty/openzgy/open-zgy", "apply", "#{formula_dir}/patches/resinsight-open-zgy.patch"
+
+     system "cmake", "-S", source_dir, "-B", build_dir, *std_cmake_args, *Resinsight.cmake_args
+     system "cmake", "--build", build_dir
+     system "cmake", "--install", build_dir, "--component", "Runtime"
+     bin.install_symlink prefix/"ResInsight.app/Contents/MacOS/ResInsight"
   end
 
   # test do
