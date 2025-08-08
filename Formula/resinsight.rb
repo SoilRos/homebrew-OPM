@@ -20,6 +20,7 @@ class Resinsight < Formula
   depends_on "boost"
   depends_on "libomp"
   depends_on "qt"
+  depends_on "fast_float"
   depends_on "spdlog"
   depends_on "apache-arrow"
   depends_on "fmt"
@@ -104,10 +105,8 @@ class Resinsight < Formula
     FileUtils.mv("surfio", surfio_dir)
 
     system "git", "-C", source_dir, "submodule", "update", "--init", "--recursive"
-    head do
-      system "git", "-C", source_dir, "apply", "#{formula_dir}/patches/resinsight/head/surfio-from-chars.patch"
-      system "git", "-C", source_dir/"ThirdParty/openzgy/open-zgy", "apply", "#{formula_dir}/patches/resinsight/head/open-zgy.patch"
-    end
+    system "git", "-C", source_dir, "apply", "#{formula_dir}/patches/resinsight/head/surfio-from-chars.patch"
+    system "git", "-C", source_dir/"ThirdParty/openzgy/open-zgy", "apply", "#{formula_dir}/patches/resinsight/head/open-zgy.patch"
 
     system "cmake", "-S", source_dir, "-B", build_dir, *std_cmake_args, *Resinsight.cmake_args
     system "cmake", "--build", build_dir
