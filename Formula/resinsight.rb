@@ -58,31 +58,31 @@ class Resinsight < Formula
 
     formula_dir = Pathname.new(__FILE__).dirname
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight-remove-open-vds.patch"
+        url "file://#{formula_dir}/patches/resinsight/head/remove-open-vds.patch"
         sha256 "45f97b82fbc7d778a8c8f771f5a2e7fbc9dd9923318029795f6280248b4ef706"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight-cpp20-stacktrace.patch"
+        url "file://#{formula_dir}/patches/resinsight/head/cpp20-stacktrace.patch"
         sha256 "7ca084555c77883714bf0dfca0769684681d9824da72f5a0afad15626dd76881"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight-cpp20-spanstream.patch"
+        url "file://#{formula_dir}/patches/resinsight/head/cpp20-spanstream.patch"
         sha256 "b8cfd36076083b634c0db9383eb124f8ecad25702186b481b8fb1322df704e32"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight-clang-16.patch"
+        url "file://#{formula_dir}/patches/resinsight/head/clang-16.patch"
         sha256 "5884e6cf4f44b95a4879df70bc2caf3f5186e70cdaf478d912e6b5603179e349"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight-templated-function.patch"
+        url "file://#{formula_dir}/patches/resinsight/head/templated-function.patch"
         sha256 "fc638d712bac443f3818d73a002e897090812040ff6ea518dda92673451d6a69"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight-install-bundle.patch"
+        url "file://#{formula_dir}/patches/resinsight/head/install-bundle.patch"
         sha256 "080cbfc6621808b6abe2e8b893435d4b46a8072404a7898c33c6b03d4a13700a"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight-open-file.patch"
+        url "file://#{formula_dir}/patches/resinsight/head/open-file.patch"
         sha256 "a2754aeeeb1535fdef27ebfe405a755c36c78a1a51b41398b05191079c87c1f8"
     end
   end
@@ -105,9 +105,9 @@ class Resinsight < Formula
 
     system "git", "-C", source_dir, "submodule", "update", "--init", "--recursive"
     head do
-      system "git", "-C", source_dir, "apply", "#{formula_dir}/patches/resinsight-surfio-from-chars.patch"
+      system "git", "-C", source_dir, "apply", "#{formula_dir}/patches/resinsight/head/surfio-from-chars.patch"
+      system "git", "-C", source_dir/"ThirdParty/openzgy/open-zgy", "apply", "#{formula_dir}/patches/resinsight/head/open-zgy.patch"
     end
-    system "git", "-C", source_dir/"ThirdParty/openzgy/open-zgy", "apply", "#{formula_dir}/patches/resinsight-open-zgy.patch"
 
     system "cmake", "-S", source_dir, "-B", build_dir, *std_cmake_args, *Resinsight.cmake_args
     system "cmake", "--build", build_dir
