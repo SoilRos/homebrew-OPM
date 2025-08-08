@@ -7,8 +7,6 @@ class Resinsight < Formula
     tag:      "v2025.04.3.1",
     revision: "c33402f5ea4bde4b02cbe50a5567816f605335e9"
 
-  head "https://github.com/OPM/ResInsight.git", branch: "dev", using: :git
-
   license all_of: [
     "GPL-3.0-or-later"
   ]
@@ -25,37 +23,6 @@ class Resinsight < Formula
   depends_on "apache-arrow"
   depends_on "fmt"
 
-  head do
-     formula_dir = Pathname.new(__FILE__).dirname
-     patch :p1 do
-          url "file://#{formula_dir}/patches/resinsight-remove-open-vds.patch"
-          sha256 "45f97b82fbc7d778a8c8f771f5a2e7fbc9dd9923318029795f6280248b4ef706"
-     end
-     patch :p1 do
-          url "file://#{formula_dir}/patches/resinsight-cpp20-stacktrace.patch"
-          sha256 "7ca084555c77883714bf0dfca0769684681d9824da72f5a0afad15626dd76881"
-     end
-     patch :p1 do
-          url "file://#{formula_dir}/patches/resinsight-cpp20-spanstream.patch"
-          sha256 "b8cfd36076083b634c0db9383eb124f8ecad25702186b481b8fb1322df704e32"
-     end
-     patch :p1 do
-          url "file://#{formula_dir}/patches/resinsight-clang-17.patch"
-          sha256 "22c42412197386a1181fb587c2c68090bd92a49c37e0efd0dc8cd451bb08b077"
-     end
-     patch :p1 do
-          url "file://#{formula_dir}/patches/resinsight-templated-function.patch"
-          sha256 "fc638d712bac443f3818d73a002e897090812040ff6ea518dda92673451d6a69"
-     end
-     patch :p1 do
-          url "file://#{formula_dir}/patches/resinsight-install-bundle.patch"
-          sha256 "080cbfc6621808b6abe2e8b893435d4b46a8072404a7898c33c6b03d4a13700a"
-     end
-     patch :p1 do
-          url "file://#{formula_dir}/patches/resinsight-open-file.patch"
-          sha256 "a2754aeeeb1535fdef27ebfe405a755c36c78a1a51b41398b05191079c87c1f8"
-     end
-  end
 
   def self.cmake_args
     libomp = Formula["libomp"]
@@ -82,6 +49,43 @@ class Resinsight < Formula
           branch: "main",
           revision: "9ba7fca3e8796708b5d01f76b6c8d4ff8167c0bcf90f67c4aa4a5f9397de3c46"
   end
+
+  head do
+    url "https://github.com/OPM/ResInsight.git",
+      branch: "dev",
+      using: :git
+
+    formula_dir = Pathname.new(__FILE__).dirname
+    patch :p1 do
+        url "file://#{formula_dir}/patches/resinsight-remove-open-vds.patch"
+        sha256 "45f97b82fbc7d778a8c8f771f5a2e7fbc9dd9923318029795f6280248b4ef706"
+    end
+    patch :p1 do
+        url "file://#{formula_dir}/patches/resinsight-cpp20-stacktrace.patch"
+        sha256 "7ca084555c77883714bf0dfca0769684681d9824da72f5a0afad15626dd76881"
+    end
+    patch :p1 do
+        url "file://#{formula_dir}/patches/resinsight-cpp20-spanstream.patch"
+        sha256 "b8cfd36076083b634c0db9383eb124f8ecad25702186b481b8fb1322df704e32"
+    end
+    patch :p1 do
+        url "file://#{formula_dir}/patches/resinsight-clang-16.patch"
+        sha256 "5884e6cf4f44b95a4879df70bc2caf3f5186e70cdaf478d912e6b5603179e349"
+    end
+    patch :p1 do
+        url "file://#{formula_dir}/patches/resinsight-templated-function.patch"
+        sha256 "fc638d712bac443f3818d73a002e897090812040ff6ea518dda92673451d6a69"
+    end
+    patch :p1 do
+        url "file://#{formula_dir}/patches/resinsight-install-bundle.patch"
+        sha256 "080cbfc6621808b6abe2e8b893435d4b46a8072404a7898c33c6b03d4a13700a"
+    end
+    patch :p1 do
+        url "file://#{formula_dir}/patches/resinsight-open-file.patch"
+        sha256 "a2754aeeeb1535fdef27ebfe405a755c36c78a1a51b41398b05191079c87c1f8"
+    end
+  end
+
 
   def install
      source_dir = buildpath/"src"
