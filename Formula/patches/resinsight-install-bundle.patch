@@ -1,0 +1,60 @@
+diff --git a/ApplicationExeCode/CMakeLists.txt b/ApplicationExeCode/CMakeLists.txt
+index f72f4518e..946c5e2a7 100644
+--- a/ApplicationExeCode/CMakeLists.txt
++++ b/ApplicationExeCode/CMakeLists.txt
+@@ -374,7 +374,9 @@ if(RESINSIGHT_PRIVATE_INSTALL)
+
+   endif()
+
+-  install(TARGETS ResInsight DESTINATION ${RESINSIGHT_INSTALL_FOLDER})
++  install(TARGETS ResInsight
++    BUNDLE DESTINATION ${RESINSIGHT_INSTALL_FOLDER} COMPONENT Runtime
++    RUNTIME DESTINATION ${RESINSIGHT_INSTALL_FOLDER} COMPONENT Runtime)
+   install(FILES ${RESINSIGHT_FILES} DESTINATION ${RESINSIGHT_INSTALL_FOLDER})
+
+   if(WIN32 AND WINDEPLOYQT_EXECUTABLE)
+@@ -468,19 +470,6 @@ endforeach()
+ # Installation packaging
+ # ##############################################################################
+
+-if(Qt6Widgets_VERSION VERSION_LESS 6.5.0)
+-  message("Detected Qt version ${Qt6Widgets_VERSION}")
+-  message(
+-    "Install target is not complete as Qt 6.5 is required to use qt_generate_deploy_app_script()"
+-  )
+-else()
+-  qt_generate_deploy_app_script(
+-    TARGET ResInsight OUTPUT_SCRIPT deploy_script NO_UNSUPPORTED_PLATFORM_ERROR
+-    NO_TRANSLATIONS
+-  )
+-  install(SCRIPT ${deploy_script})
+-endif()
+-
+ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+   set(CPACK_GENERATOR TGZ)
+ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0e843b83f..d33452951 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -972,7 +972,11 @@ endif()
+
+ # Set the install folder to be the bin folder. TODO: Move Python scripts to a
+ # separate folder
+-set(RESINSIGHT_INSTALL_FOLDER "bin")
++if(APPLE)
++  set(RESINSIGHT_INSTALL_FOLDER ".")
++else()
++  set(RESINSIGHT_INSTALL_FOLDER "bin")
++endif()
+
+ # override system install prefix if private installation chosen
+ option(RESINSIGHT_PRIVATE_INSTALL
+@@ -1007,7 +1011,7 @@ if(RESINSIGHT_PRIVATE_INSTALL)
+     )
+     install(
+       FILES ${ERT_SHARED_LIB_FILES}
+-      DESTINATION ${RESINSIGHT_INSTALL_FOLDER}/ResInsight.app/Contents/MacOS
++      DESTINATION ${RESINSIGHT_INSTALL_FOLDER}/ResInsight.app/Contents/Frameworks COMPONENT Runtime
+     )
+   endif()

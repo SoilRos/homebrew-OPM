@@ -1,0 +1,36 @@
+name: CI Builds
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    # Every monday
+    - cron:  '0 0 * * MON'
+
+jobs:
+  type-lite:
+    name: type-lite
+    runs-on: macos-15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Set up Homebrew
+        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - name: Build and Install
+        run: |
+          brew install -v SoilRos/OPM/type-lite
+
+  ResInsight:
+    name: ResInsight
+    runs-on: macos-15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Set up Homebrew
+        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - name: Build and Install
+        run: |
+          brew install -v SoilRos/OPM/ResInsight

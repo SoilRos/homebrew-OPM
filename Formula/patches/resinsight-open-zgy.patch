@@ -1,0 +1,25 @@
+diff --git a/native/src/exception.cpp b/native/src/exception.cpp
+index bb6717c..c11bba6 100644
+--- a/native/src/exception.cpp
++++ b/native/src/exception.cpp
+@@ -52,7 +52,7 @@ namespace {
+     //errstring = std::string(strerror(system_errno));
+     if (0 == strerror_s(buf, sizeof(buf) - 1, system_errno))
+       errstring = std::string(buf);
+-#elif (_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE
++#elif defined(__APPLE__) || (defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 200112L)
+     int rc = strerror_r(system_errno, buf, sizeof(buf)-1);
+     buf[sizeof(buf)-1] = '\0';
+     errstring = std::string(buf);
+diff --git a/native/src/exception.h b/native/src/exception.h
+index f51ca7d..cf6811f 100644
+--- a/native/src/exception.h
++++ b/native/src/exception.h
+@@ -16,6 +16,7 @@
+
+ #include "declspec.h"
+ #include <stdexcept>
++#include <string>
+
+ /** \file exception.h
+  *

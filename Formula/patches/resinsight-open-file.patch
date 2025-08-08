@@ -1,0 +1,64 @@
+diff --git a/ApplicationLibCode/FileInterface/RifArrowTools.cpp b/ApplicationLibCode/FileInterface/RifArrowTools.cpp
+index b9661c829..609a1a4d6 100644
+--- a/ApplicationLibCode/FileInterface/RifArrowTools.cpp
++++ b/ApplicationLibCode/FileInterface/RifArrowTools.cpp
+@@ -34,7 +34,11 @@ QString RifArrowTools::readFirstRowsOfTable( const QByteArray& contents )
+
+     // Open Parquet file reader
+     std::unique_ptr<parquet::arrow::FileReader> arrow_reader;
++#if ARROW_VERSION_MAJOR > 19
++    if ( auto openResult = parquet::arrow::OpenFile( input, pool ).Value(&arrow_reader); !openResult.ok() )
++#else
+     if ( !parquet::arrow::OpenFile( input, pool, &arrow_reader ).ok() )
++#endif
+     {
+         return {};
+     }
+diff --git a/ApplicationLibCode/FileInterface/RifOsduWellLogReader.cpp b/ApplicationLibCode/FileInterface/RifOsduWellLogReader.cpp
+index 31c98527b..993068cb5 100644
+--- a/ApplicationLibCode/FileInterface/RifOsduWellLogReader.cpp
++++ b/ApplicationLibCode/FileInterface/RifOsduWellLogReader.cpp
+@@ -46,7 +46,11 @@ std::pair<cvf::ref<RigOsduWellLogData>, QString> RifOsduWellLogReader::readWellL
+
+     // Open Parquet file reader
+     std::unique_ptr<parquet::arrow::FileReader> arrow_reader;
++#if ARROW_VERSION_MAJOR > 19
++    if ( auto openResult = parquet::arrow::OpenFile( input, pool ).Value(&arrow_reader); !openResult.ok() )
++#else
+     if ( !parquet::arrow::OpenFile( input, pool, &arrow_reader ).ok() )
++#endif
+     {
+         return { nullptr, "Unable to read parquet data." };
+     }
+diff --git a/ApplicationLibCode/FileInterface/RifOsduWellPathReader.cpp b/ApplicationLibCode/FileInterface/RifOsduWellPathReader.cpp
+index 6b66a2d32..ccf8279b6 100644
+--- a/ApplicationLibCode/FileInterface/RifOsduWellPathReader.cpp
++++ b/ApplicationLibCode/FileInterface/RifOsduWellPathReader.cpp
+@@ -116,7 +116,11 @@ std::pair<cvf::ref<RigWellPath>, QString> RifOsduWellPathReader::readWellPathDat
+
+     // Open Parquet file reader
+     std::unique_ptr<parquet::arrow::FileReader> arrow_reader;
++#if ARROW_VERSION_MAJOR > 19
++    if ( auto openResult = parquet::arrow::OpenFile( input, pool ).Value(&arrow_reader); !openResult.ok() )
++#else
+     if ( !parquet::arrow::OpenFile( input, pool, &arrow_reader ).ok() )
++#endif
+     {
+         return { nullptr, "Unable to read parquet data." };
+     }
+diff --git a/ApplicationLibCode/ProjectDataModel/Summary/Sumo/RimSummaryEnsembleSumo.cpp b/ApplicationLibCode/ProjectDataModel/Summary/Sumo/RimSummaryEnsembleSumo.cpp
+index 82da35686..da556cd7f 100644
+--- a/ApplicationLibCode/ProjectDataModel/Summary/Sumo/RimSummaryEnsembleSumo.cpp
++++ b/ApplicationLibCode/ProjectDataModel/Summary/Sumo/RimSummaryEnsembleSumo.cpp
+@@ -161,7 +161,11 @@ std::shared_ptr<arrow::Table> RimSummaryEnsembleSumo::readParquetTable( const QB
+
+     std::shared_ptr<arrow::Table>               table;
+     std::unique_ptr<parquet::arrow::FileReader> arrow_reader;
++#if ARROW_VERSION_MAJOR > 19
++    if ( auto openResult = parquet::arrow::OpenFile( input, pool ).Value(&arrow_reader); openResult.ok() )
++#else
+     if ( auto openResult = parquet::arrow::OpenFile( input, pool, &arrow_reader ); openResult.ok() )
++#endif
+     {
+         if ( auto readResult = arrow_reader->ReadTable( &table ); readResult.ok() )
+         {
