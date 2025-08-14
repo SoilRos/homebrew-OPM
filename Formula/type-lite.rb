@@ -9,17 +9,9 @@ class TypeLite < Formula
   license "BSD-1-Clause"
 
   depends_on "cmake" => :build
-  depends_on "ninja" => :build
-
-  def self.cmake_args
-    [
-      "-G", "Ninja Multi-Config",
-      "-DCMAKE_BUILD_TYPE=Release"
-    ]
-  end
 
   def install
-    system "cmake", ".", *std_cmake_args, *TypeLite.cmake_args
+    system "cmake", ".", *std_cmake_args
     system "cmake", "--build", ".", "--target", "install"
   end
 

@@ -17,10 +17,10 @@ class Resinsight < Formula
   depends_on "python" => :build
   depends_on "pugixml" => :build
   depends_on "eigen" => :build
+  depends_on "fast_float" => :build
   depends_on "boost"
   depends_on "libomp"
   depends_on "qt"
-  depends_on "fast_float"
   depends_on "spdlog"
   depends_on "apache-arrow"
   depends_on "fmt"
@@ -45,12 +45,12 @@ class Resinsight < Formula
     ]
   end
 
-  resource "surfio" do
-     url "https://github.com/equinor/surfio.git" ,
-          using:    :git,
-          branch: "main",
-          revision: "9ba7fca3e8796708b5d01f76b6c8d4ff8167c0bcf90f67c4aa4a5f9397de3c46"
-  end
+  # resource "surfio" do
+  #    url "https://github.com/equinor/surfio.git" ,
+  #         using:    :git,
+  #         branch: "main",
+  #         revision: "f3f07dda2b578caffb2bc4ec82e12f31128864fa"
+  # end
 
   head do
     url "https://github.com/OPM/ResInsight.git",
@@ -80,7 +80,7 @@ class Resinsight < Formula
     end
     patch :p1 do
         url "file://#{formula_dir}/patches/resinsight/head/install-bundle.patch"
-        sha256 "080cbfc6621808b6abe2e8b893435d4b46a8072404a7898c33c6b03d4a13700a"
+        sha256 "bc557fa2331a16452d0be6dd4c7cf304ec0ea6308d040e10548a461361fa88fc"
     end
     patch :p1 do
         url "file://#{formula_dir}/patches/resinsight/head/open-file.patch"
@@ -97,12 +97,6 @@ class Resinsight < Formula
     items = Dir[".[!.]*"] + Dir["*"]
     mkdir source_dir
     FileUtils.mv(items, source_dir)
-
-    # override surfio with latest version
-    resource("surfio").stage "surfio"
-    surfio_dir = source_dir/"ThirdParty/custom-surfio/surfio"
-    FileUtils.rm_rf(surfio_dir) if surfio_dir.exist?
-    FileUtils.mv("surfio", surfio_dir)
 
     system "git", "-C", source_dir, "submodule", "update", "--init", "--recursive"
     system "git", "-C", source_dir, "apply", "#{formula_dir}/patches/resinsight/head/surfio-from-chars.patch"
