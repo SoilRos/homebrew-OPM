@@ -69,10 +69,6 @@ class Resinsight < Formula
         sha256 "5884e6cf4f44b95a4879df70bc2caf3f5186e70cdaf478d912e6b5603179e349"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight/head/templated-function.patch"
-        sha256 "fc638d712bac443f3818d73a002e897090812040ff6ea518dda92673451d6a69"
-    end
-    patch :p1 do
         url "file://#{formula_dir}/patches/resinsight/head/install-bundle.patch"
         sha256 "bc557fa2331a16452d0be6dd4c7cf304ec0ea6308d040e10548a461361fa88fc"
     end
