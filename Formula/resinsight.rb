@@ -18,16 +18,17 @@ class Resinsight < Formula
   depends_on "pugixml" => :build
   depends_on "eigen" => :build
   depends_on "fast_float" => :build
-  depends_on "boost"
+  depends_on "boost@1.85"
   depends_on "libomp"
   depends_on "qt"
   depends_on "spdlog"
   depends_on "apache-arrow"
   depends_on "fmt"
 
-
   def self.cmake_args
     libomp = Formula["libomp"]
+    fmt = Formula["fmt"]
+    boost = Formula["boost@1.85"]
     [
       "-G", "Ninja",
       "-DHOMEBREW_ALLOW_FETCHCONTENT=ON",
@@ -35,22 +36,19 @@ class Resinsight < Formula
       "-DRESINSIGHT_TREAT_WARNINGS_AS_ERRORS=OFF",
       "-DRESINSIGHT_ENABLE_UNITY_BUILD=OFF",
       "-DRESINSIGHT_ENABLE_GRPC=OFF",
+      "-DRESINSIGHT_ENABLE_OPENVDS=OFF",
+      # TODO: opm-common incorrectly links the fmt target, so currently one needs `brew link fmt`
+      "-Dfmt_ROOT='#{fmt.prefix}'",
+      "-DBoost_ROOT='#{boost.prefix}'",
       "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
       # Apple Clang + Homebrew needs special arguments for OpenMP
       "-DRESINSIGHT_USE_OPENMP=OFF",
       "-DCMAKE_DISABLE_FIND_PACKAGE_OpenMP=ON",
       "-DCMAKE_CXX_FLAGS='-Xpreprocessor -fopenmp -I#{libomp.opt_include} -DUSE_OPENMP'",
-      "-DCMAKE_EXE_LINKER_FLAGS='-L#{libomp.opt_lib} -lomp'",
-      "-DCMAKE_SHARED_LINKER_FLAGS='-L#{libomp.opt_lib} -lomp'"
+      "-DCMAKE_EXE_LINKER_FLAGS='-L#{libomp.lib} -lomp'",
+      "-DCMAKE_SHARED_LINKER_FLAGS='-L#{libomp.lib} -lomp'"
     ]
   end
-
-  # resource "surfio" do
-  #    url "https://github.com/equinor/surfio.git" ,
-  #         using:    :git,
-  #         branch: "main",
-  #         revision: "f3f07dda2b578caffb2bc4ec82e12f31128864fa"
-  # end
 
   head do
     url "https://github.com/OPM/ResInsight.git",
@@ -58,10 +56,6 @@ class Resinsight < Formula
       using: :git
 
     formula_dir = Pathname.new(__FILE__).dirname
-    patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight/head/remove-open-vds.patch"
-        sha256 "45f97b82fbc7d778a8c8f771f5a2e7fbc9dd9923318029795f6280248b4ef706"
-    end
     patch :p1 do
         url "file://#{formula_dir}/patches/resinsight/head/cpp20-stacktrace.patch"
         sha256 "7ca084555c77883714bf0dfca0769684681d9824da72f5a0afad15626dd76881"
