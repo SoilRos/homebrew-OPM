@@ -65,8 +65,8 @@ class Resinsight < Formula
         sha256 "b8cfd36076083b634c0db9383eb124f8ecad25702186b481b8fb1322df704e32"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight/head/clang-16.patch"
-        sha256 "5884e6cf4f44b95a4879df70bc2caf3f5186e70cdaf478d912e6b5603179e349"
+        url "file://#{formula_dir}/patches/resinsight/head/clang-15.patch"
+        sha256 "14627856ca3ff31d1f09ecfce623775f976e72ba114594694c3840b023cbc88e"
     end
     patch :p1 do
         url "file://#{formula_dir}/patches/resinsight/head/install-bundle.patch"
