@@ -7,11 +7,11 @@ index 0e843b83f..b813eccbc 100644
 
  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 -  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.0)
-+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 15.0)
++  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 16.0)
      message(
        FATAL_ERROR
 -        "Minimum supported version is Clang 19, detected version: ${CMAKE_CXX_COMPILER_VERSION}"
-+        "Minimum supported version is Clang 15, detected version: ${CMAKE_CXX_COMPILER_VERSION}"
++        "Minimum supported version is Clang 16, detected version: ${CMAKE_CXX_COMPILER_VERSION}"
      )
    endif()
  endif()
