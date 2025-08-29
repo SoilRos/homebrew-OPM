@@ -12,7 +12,7 @@ jobs:
 
   ResInsight:
     name: ResInsight
-    runs-on: macos-15
+    runs-on: macos-13
     defaults:
       run:
         shell: bash
