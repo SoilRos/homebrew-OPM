@@ -69,13 +69,14 @@ class Resinsight < Formula
         sha256 "5884e6cf4f44b95a4879df70bc2caf3f5186e70cdaf478d912e6b5603179e349"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight/head/install-bundle.patch"
-        sha256 "bc557fa2331a16452d0be6dd4c7cf304ec0ea6308d040e10548a461361fa88fc"
-    end
-    patch :p1 do
         url "file://#{formula_dir}/patches/resinsight/head/open-file.patch"
         sha256 "a2754aeeeb1535fdef27ebfe405a755c36c78a1a51b41398b05191079c87c1f8"
     end
+    # This may be skipped if the bundle will be standalone. TODO: add a homebrew option for this
+    # patch :p1 do
+    #     url "file://#{formula_dir}/patches/resinsight/head/install-bundle.patch"
+    #     sha256 "bc557fa2331a16452d0be6dd4c7cf304ec0ea6308d040e10548a461361fa88fc"
+    # end
   end
 
   def install
