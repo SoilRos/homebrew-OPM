@@ -21,7 +21,7 @@ jobs:
         run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       - name: Build and Install
         run: |
-          brew install -v --head SoilRos/OPM/ResInsight
+          brew install -v SoilRos/OPM/ResInsight
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
