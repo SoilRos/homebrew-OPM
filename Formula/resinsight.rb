@@ -4,8 +4,8 @@ class Resinsight < Formula
 
   url "https://github.com/OPM/ResInsight.git",
     using:    :git,
-    tag:      "v2025.04.3.1",
-    revision: "c33402f5ea4bde4b02cbe50a5567816f605335e9"
+    tag:      "v2025.09.1",
+    revision: "a3ec18bd045c39a1b1da3412b3a34a30667dadbb"
 
   license all_of: [
     "GPL-3.0-or-later"
@@ -50,33 +50,46 @@ class Resinsight < Formula
     ]
   end
 
+  patch_dir = "file://#{Pathname.new(__FILE__).dirname}/patches/resinsight/v2025.09.1"
+  patch :p1 do
+      url "#{patch_dir}/cpp20-stacktrace.patch"
+      sha256 "7ca084555c77883714bf0dfca0769684681d9824da72f5a0afad15626dd76881"
+  end
+  patch :p1 do
+      url "#{patch_dir}/cpp20-spanstream.patch"
+      sha256 "b8cfd36076083b634c0db9383eb124f8ecad25702186b481b8fb1322df704e32"
+  end
+  patch :p1 do
+      url "#{patch_dir}/clang-16.patch"
+      sha256 "5884e6cf4f44b95a4879df70bc2caf3f5186e70cdaf478d912e6b5603179e349"
+  end
+  patch :p1 do
+      url "#{patch_dir}/open-file.patch"
+      sha256 "a2754aeeeb1535fdef27ebfe405a755c36c78a1a51b41398b05191079c87c1f8"
+  end
+
   head do
     url "https://github.com/OPM/ResInsight.git",
       branch: "dev",
       using: :git
 
-    formula_dir = Pathname.new(__FILE__).dirname
+    patch_dir = "file://#{Pathname.new(__FILE__).dirname}/patches/resinsight/head"
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight/head/cpp20-stacktrace.patch"
+        url "#{patch_dir}/cpp20-stacktrace.patch"
         sha256 "7ca084555c77883714bf0dfca0769684681d9824da72f5a0afad15626dd76881"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight/head/cpp20-spanstream.patch"
+        url "#{patch_dir}/cpp20-spanstream.patch"
         sha256 "b8cfd36076083b634c0db9383eb124f8ecad25702186b481b8fb1322df704e32"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight/head/clang-16.patch"
+        url "#{patch_dir}/clang-16.patch"
         sha256 "5884e6cf4f44b95a4879df70bc2caf3f5186e70cdaf478d912e6b5603179e349"
     end
     patch :p1 do
-        url "file://#{formula_dir}/patches/resinsight/head/open-file.patch"
+        url "#{patch_dir}/open-file.patch"
         sha256 "a2754aeeeb1535fdef27ebfe405a755c36c78a1a51b41398b05191079c87c1f8"
     end
-    # This may be skipped if the bundle will be standalone. TODO: add a homebrew option for this
-    # patch :p1 do
-    #     url "file://#{formula_dir}/patches/resinsight/head/install-bundle.patch"
-    #     sha256 "bc557fa2331a16452d0be6dd4c7cf304ec0ea6308d040e10548a461361fa88fc"
-    # end
   end
 
   def install
@@ -95,7 +108,7 @@ class Resinsight < Formula
 
     system "cmake", "-S", source_dir, "-B", build_dir, *std_cmake_args, *Resinsight.cmake_args
     system "cmake", "--build", build_dir
-    system "cmake", "--install", build_dir, "--component", "Runtime"
+    system "cmake", "--install", build_dir
     bin.install_symlink prefix/"ResInsight.app/Contents/MacOS/ResInsight"
   end
 
