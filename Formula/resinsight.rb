@@ -109,6 +109,18 @@ class Resinsight < Formula
     system "cmake", "-S", source_dir, "-B", build_dir, *std_cmake_args, *Resinsight.cmake_args
     system "cmake", "--build", build_dir
     system "cmake", "--install", build_dir
+
+    # Use macdeployqt to bundle Qt frameworks (the one in CMake seems not to work properly)
+    app = prefix/"ResInsight.app"
+    system Formula["qt"].opt_bin/"macdeployqt", app,
+       "-always-overwrite",
+       "-executable=#{app}/Contents/MacOS/ResInsight"
+
+    # Create a relative symlink inside the frameworks dir (fixes runtime issues)
+    Dir.chdir(app/"Contents/Frameworks") do
+      File.symlink("libresdata.dylib", "libresdata.2.dylib") unless File.exist?("libresdata.2.dylib")
+    end
+
     bin.install_symlink prefix/"ResInsight.app/Contents/MacOS/ResInsight"
   end
 
