@@ -12,7 +12,10 @@ jobs:
 
   ResInsight:
     name: ResInsight
-    runs-on: macos-15
+    runs-on: ${{ matrix.macos }}
+    strategy:
+      matrix:
+        macos: [macos-15, macos-26]
     defaults:
       run:
         shell: bash
