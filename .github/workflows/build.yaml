@@ -28,5 +28,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ResInsight
+          name: ResInsight-${{ matrix.macos }}
           path: /opt/homebrew/Cellar/resinsight/*/ResInsight.app
